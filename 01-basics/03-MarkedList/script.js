@@ -33,11 +33,19 @@ createApp({
   }),
   computed: {
     filter() {
-      if (this.search) {
-        return this.emails.filter((email) => email.toLowerCase().includes(this.search.toLowerCase()));
-      } else {
-        return [];
-      }
+      return this.emails.map((email) => {
+        if (this.search && email.toLowerCase().includes(this.search.toLowerCase())) {
+          return {
+            email,
+            label: true,
+          };
+        } else {
+          return {
+            email,
+            label: false,
+          };
+        }
+      });
     },
   },
 }).mount('#app');

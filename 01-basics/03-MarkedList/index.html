@@ -17,7 +17,7 @@
           <input v-model="search" type="search" />
         </div>
         <ul>
-          <li v-for="email in emails" :class="{'marked': filter.includes(email)}">{{email}}</li>
+          <li v-for="item in filter" :class="{'marked': item.label}">{{ item.email }}</li>
         </ul>
       </div>
     </div>
