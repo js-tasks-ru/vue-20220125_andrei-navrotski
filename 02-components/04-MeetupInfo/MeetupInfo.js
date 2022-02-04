@@ -12,7 +12,7 @@ export default defineComponent({
       required: true,
     },
     date: {
-      type: Date,
+      type: Number,
       required: true,
     },
   },
