@@ -21,7 +21,6 @@ export default defineComponent({
     meetup: null,
     error: null,
   }),
-  fetchMeetup: fetchMeetupById,
   watch: {
     meetupId: {
       immediate: true,
