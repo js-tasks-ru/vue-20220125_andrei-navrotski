@@ -8,11 +8,7 @@
 export default {
   name: 'MeetupCover',
 
-  props: {
-    title: { type: String },
-    image: { type: String },
-  },
-
+  props: ['title', 'image'],
   computed: {
     backgroundImage() {
       return this.image ? `url('${this.image}')` : 'var(--default-cover)';
