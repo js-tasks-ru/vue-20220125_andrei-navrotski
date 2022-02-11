@@ -1,18 +1,22 @@
 <template>
-  <div class="dropdown dropdown_opened">
-    <button type="button" class="dropdown__toggle dropdown__toggle_icon">
-      <ui-icon icon="tv" class="dropdown__icon" />
-      <span>Title</span>
+  <div class="dropdown" :class="{ dropdown_opened: eventButton }" @click="eventButton = !eventButton">
+    <button type="button" class="dropdown__toggle" :class="{ dropdown__toggle_icon: presenceIcons }">
+      <ui-icon v-if="selected.icon" :icon="selected.icon" class="dropdown__icon" />
+      <span>{{ selected.text || title }}</span>
     </button>
 
-    <div class="dropdown__menu" role="listbox">
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 1
-      </button>
-      <button class="dropdown__item dropdown__item_icon" role="option" type="button">
-        <ui-icon icon="tv" class="dropdown__icon" />
-        Option 2
+    <div v-show="eventButton" class="dropdown__menu" role="listbox">
+      <button
+        v-for="option in options"
+        :key="option.text"
+        class="dropdown__item"
+        :class="{ dropdown__item_icon: presenceIcons }"
+        role="option"
+        type="button"
+        @click="$emit('update:modelValue', option.value)"
+      >
+        <ui-icon v-if="option.icon" :icon="option.icon" class="dropdown__icon" />
+        {{ option.text }}
       </button>
     </div>
   </div>
@@ -25,6 +29,31 @@ export default {
   name: 'UiDropdown',
 
   components: { UiIcon },
+  props: {
+    options: {
+      type: Array,
+      required: true,
+    },
+    modelValue: {
+      type: String,
+    },
+    title: {
+      type: String,
+      required: true,
+    },
+  },
+  emits: ['update:modelValue'],
+  data: () => ({
+    eventButton: false,
+  }),
+  computed: {
+    selected() {
+      return this.modelValue ? this.options.find((item) => item.value === this.modelValue) : {};
+    },
+    presenceIcons() {
+      return this.options.some((item) => item.icon);
+    },
+  },
 };
 </script>
 
