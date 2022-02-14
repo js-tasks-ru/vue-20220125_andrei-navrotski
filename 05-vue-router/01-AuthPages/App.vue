@@ -3,6 +3,7 @@
     <meetups-header />
     <main class="main">
       <div>CURRENT PAGE</div>
+      <router-view />
     </main>
     <meetups-footer />
   </div>
