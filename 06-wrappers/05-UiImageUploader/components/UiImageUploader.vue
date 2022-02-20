@@ -51,8 +51,8 @@ export default {
       this.loading = true;
       try {
         let imageSrc = await this.uploader(imageFile);
-        this.$emit('upload', imageSrc);
         this.loading = false;
+        this.$emit('upload', imageSrc);
       } catch (error) {
         this.deleteImage();
         this.loading = false;
