@@ -2,7 +2,7 @@
   <div class="image-uploader">
     <label
       class="image-uploader__preview"
-      :class="{ 'image-uploader__preview-loading': loading }"
+      :class="{ 'image-uploader__preview-loading': state === 'loading' }"
       :style="`--bg-url: url(${preview})`"
     >
       <span class="image-uploader__text">{{ text }}</span>
@@ -12,7 +12,7 @@
         type="file"
         accept="image/*"
         class="image-uploader__input"
-        @click="verifyPreview"
+        @click="handleClick"
         @change="uploadFile"
       />
     </label>
@@ -29,40 +29,57 @@ export default {
   },
   emits: ['remove', 'upload', 'error', 'select'],
   data: () => ({
-    loading: false,
+    selectedSrc: undefined,
+    state: undefined,
   }),
   computed: {
     text() {
-      if (this.loading) return 'Загрузка...';
-      if (this.preview) return 'Удалить изображение';
-      return 'Загрузить изображение ';
+      return {
+        empty: 'Загрузить изображение',
+        loading: 'Загрузка...',
+        filled: 'Удалить изображение',
+      }[this.state];
+    },
+    localSrc() {
+      return this.selectedSrc || this.preview;
     },
   },
+  created() {
+    this.state = this.preview ? 'filled' : 'empty';
+  },
   methods: {
-    verifyPreview(e) {
-      if (this.preview) {
+    handleClick(e) {
+      if (this.state === 'loading') {
+        e.preventDefault();
+      } else if (this.state === 'filled') {
         e.preventDefault();
         this.deleteImage();
+        this.state = 'empty';
+        this.$emit('remove');
       }
     },
     async uploadFile() {
       let imageFile = this.$refs.input.files[0];
+      this.localSrc = URL.createObjectURL(imageFile);
       this.$emit('select', imageFile);
-      this.loading = true;
+      if (!this.uploader) {
+        this.state = 'filled';
+        return;
+      }
+      this.state = 'loading';
       try {
         let imageSrc = await this.uploader(imageFile);
-        this.loading = false;
+        this.state = 'filled';
         this.$emit('upload', imageSrc);
       } catch (error) {
+        this.state = 'empty';
         this.deleteImage();
-        this.loading = false;
         this.$emit('error', error);
       }
+      this.selectedSrc = undefined;
     },
     deleteImage() {
-      this.$emit('upload', null);
       this.$refs.input.value = '';
-      this.$emit('remove');
     },
   },
 };
